@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, _vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { EtherscanClient } from '../src/client';
 import { resetMocks, mockFetchResponse } from './setup';
 
