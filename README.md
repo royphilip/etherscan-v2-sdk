@@ -1,4 +1,3 @@
-markdown
 # etherscan-v2-sdk
 
 > A production-grade, fully type-safe and runtime-validated TypeScript client for the **Etherscan V2 API**.
@@ -7,6 +6,7 @@ markdown
 [![npm downloads](https://img.shields.io/npm/dm/etherscan-v2-sdk.svg)](https://www.npmjs.com/package/etherscan-v2-sdk)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue.svg)](https://www.typescriptlang.org/)
+[![Bun](https://img.shields.io/badge/Bun-1.0%2B-FFDF37)](https://bun.sh/)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D18.0.0-brightgreen)](https://nodejs.org/)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/royphilip/etherscan-v2-sdk/ci.yml?branch=main)](https://github.com/royphilip/etherscan-v2-sdk/actions)
 [![Test Coverage](https://img.shields.io/codecov/c/github/royphilip/etherscan-v2-sdk)](https://codecov.io/gh/royphilip/etherscan-v2-sdk)
@@ -25,9 +25,11 @@ npm install etherscan-v2-sdk
 yarn add etherscan-v2-sdk
 # or
 pnpm add etherscan-v2-sdk
+# or
+bun add etherscan-v2-sdk
 ```
 
-*Requires Node.js 18+*
+*Requires Node.js 18+ (or Bun 1.0+)*
 
 ## ⚡ Why this SDK?
 
@@ -556,12 +558,6 @@ If this SDK saves you time or powers your project, consider:
 - 💬 **Share feedback** on what works (or doesn't)
 
 For enterprise support or custom integrations, reach out via [X/Twitter](https://x.com/royphilip_).
-
----
-
-## License
-
-MIT
 
 ---
 
