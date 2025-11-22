@@ -1,0 +1,74 @@
+{
+  "name": "etherscan-v2-sdk",
+  "version": "1.0.0",
+  "description": "Production grade Etherscan V2 SDK with Zod validation and Rate Limiting",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "author": {
+    "name": "Roy Philip",
+    "url": "https://royphilip.xyz"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/royphilip/etherscan-v2-sdk.git"
+  },
+  "homepage": "https://github.com/royphilip/etherscan-v2-sdk#readme",
+  "bugs": {
+    "url": "https://github.com/royphilip/etherscan-v2-sdk/issues"
+  },
+  "keywords": [
+    "etherscan",
+    "ethereum",
+    "blockchain",
+    "api",
+    "sdk",
+    "typescript",
+    "zod",
+    "validation"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest --run",
+    "test:live": "ETHERSCAN_LIVE=1 vitest --run tests/live.test.ts",
+    "test:watch": "vitest",
+    "lint": "eslint src/ tests/ --ext .ts",
+    "lint:fix": "eslint src/ tests/ --ext .ts --fix",
+    "format": "prettier --write src/ tests/",
+    "format:check": "prettier --check src/ tests/"
+  },
+  "dependencies": {
+    "bottleneck": "^2.19.5",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "@typescript-eslint/eslint-plugin": "^8.47.0",
+    "@typescript-eslint/parser": "^8.47.0",
+    "@vitest/coverage-v8": "^4.0.13",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-import": "^2.32.0",
+    "globals": "^16.5.0",
+    "prettier": "^3.6.2",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.3",
+    "vitest": "^4.0.13"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
