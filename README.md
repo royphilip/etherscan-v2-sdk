@@ -491,9 +491,9 @@ console.log(`Fetched ${historicalData.length} days of transaction data`);
 
 ## 🧪 Testing & Quality
 
-This SDK maintains **~93% code coverage** (as of Nov 2025) with comprehensive test suites:
+This SDK maintains **~89% code coverage** (as of Nov 2025) with comprehensive test suites:
 
-- **Unit Tests:** 327+ tests covering all modules and error conditions
+- **Unit Tests:** 372+ tests covering all modules and error conditions
 - **End-to-end Tests:** End-to-end workflows with mocked transport and deduplication
 - **Security Tests:** Input validation, rate limiting, and API key protection
 - **Performance Benchmarks:** Caching and concurrency performance validation

@@ -25,6 +25,17 @@ describe('Transaction Module', () => {
       });
     });
 
+    it('should get transaction execution status with object params', async () => {
+      mockFetchResponse(mockResponses.txStatus);
+
+      const status = await client.transaction.getStatus({ txhash: testTxHash });
+
+      expect(status).toMatchObject({
+        isError: '0',
+        errDescription: '',
+      });
+    });
+
     it('should handle transaction with error', async () => {
       mockFetchResponse({
         status: '1',
@@ -55,6 +66,16 @@ describe('Transaction Module', () => {
       mockFetchResponse(mockResponses.txReceiptStatus);
 
       const status = await client.transaction.getReceiptStatus(testTxHash);
+
+      expect(status).toMatchObject({
+        status: '1',
+      });
+    });
+
+    it('should get transaction receipt status with object params', async () => {
+      mockFetchResponse(mockResponses.txReceiptStatus);
+
+      const status = await client.transaction.getReceiptStatus({ txhash: testTxHash });
 
       expect(status).toMatchObject({
         status: '1',

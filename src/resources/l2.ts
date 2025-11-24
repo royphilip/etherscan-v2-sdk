@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { BaseModule } from './base';
-import { TransactionSchema, L2TransactionSchema } from '../core/types';
+import { BridgeTransactionSchema, L2TransactionSchema } from '../core/types';
 
 export class L2 extends BaseModule {
   /**
@@ -27,7 +27,7 @@ export class L2 extends BaseModule {
         action: 'txnbridge',
         ...params,
       },
-      z.array(TransactionSchema)
+      z.array(BridgeTransactionSchema)
     );
   }
 

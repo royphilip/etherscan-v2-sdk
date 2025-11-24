@@ -191,7 +191,7 @@ export const ERC1155TransactionSchema = z.object({
   tokenValue: BigIntSchema,
   tokenName: z.string(),
   tokenSymbol: z.string(),
-  tokenDecimal: z.string(),
+  tokenDecimal: z.string().optional(), // Some ERC1155 tokens don't have decimals
   transactionIndex: z.string(),
   gas: z.string(),
   gasPrice: BigIntSchema,
@@ -226,6 +226,30 @@ export const BalanceHistorySchema = z.object({
 });
 
 export const L2TransactionSchema = TransactionSchema.passthrough();
+
+// Bridge Transaction Schema (for Polygon/Xdai/BTTC txnbridge endpoint)
+// Based on actual Polygon PoS bridge structure - different from standard transactions
+// Includes bridge-specific fields like amount and token information
+export const BridgeTransactionSchema = z.object({
+  hash: z.string(),
+  blockNumber: z.string(),
+  timeStamp: z.string(),
+  from: z.string(),
+  // Bridge-specific fields
+  address: z.string().optional(), // Recipient address
+  amount: z.string().optional().transform(val => {
+    if (!val) return undefined;
+    try {
+      return BigInt(val);
+    } catch {
+      return undefined;
+    }
+  }),
+  tokenName: z.string().optional(),
+  symbol: z.string().optional(),
+  contractAddress: z.string().optional(),
+  divisor: z.string().optional(),
+}).passthrough();
 
 export const TransactionStatusSchema = z.object({
   isError: z.string(),
@@ -412,7 +436,7 @@ export const EthTransactionReceiptSchema = z.object({
   contractAddress: NullableString,
   logs: z.array(LogSchema),
   logsBloom: z.string(),
-  status: HexString,
+  status: HexString.optional(),
 });
 
 export const EthBlockSchema = z.object({
@@ -427,7 +451,7 @@ export const EthBlockSchema = z.object({
   receiptsRoot: z.string(),
   miner: z.string(),
   difficulty: HexString,
-  totalDifficulty: HexString,
+  totalDifficulty: HexString.optional(),
   extraData: z.string(),
   size: HexString,
   gasLimit: HexString,
@@ -623,7 +647,7 @@ export const ABISchema = z.array(
         indexed: z.boolean().optional(),
         internalType: z.string().optional(),
       })
-    ),
+    ).optional(),
     name: z.string().optional(),
     outputs: z
       .array(
@@ -634,7 +658,7 @@ export const ABISchema = z.array(
         })
       )
       .optional(),
-    stateMutability: z.string(),
+    stateMutability: z.string().optional(),
     type: z.string(),
     anonymous: z.boolean().optional(),
   })

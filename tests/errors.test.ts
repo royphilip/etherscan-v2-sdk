@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { EtherscanClient } from '../src/client';
-import { APIError, RateLimitError, ValidationError, EtherscanError } from '../src/core/errors';
+import { APIError, RateLimitError, ValidationError, EtherscanError, UnsupportedChainError, PlanUpgradeRequired } from '../src/core/errors';
 import { resetMocks, mockFetchResponse, mockResponses, TEST_ADDRESSES } from './setup';
 
 describe('Error Handling', () => {
@@ -94,6 +94,109 @@ describe('Error Handling', () => {
         sort: undefined,
       });
       expect(Array.isArray(result)).toBe(true);
+    });
+  });
+
+  describe('APIError in Production', () => {
+    let originalEnv: string | undefined;
+
+    beforeEach(() => {
+      originalEnv = process.env.NODE_ENV;
+    });
+
+    afterEach(() => {
+      process.env.NODE_ENV = originalEnv;
+    });
+
+    it('should hide result in production mode', () => {
+      process.env.NODE_ENV = 'production';
+      const error = new APIError('API key invalid', { details: 'secret-data' });
+
+      const result = error.result;
+      expect(result).toEqual({ error: 'API error occurred' });
+      expect(result).not.toHaveProperty('details');
+    });
+
+    it('should show result in development mode', () => {
+      process.env.NODE_ENV = 'development';
+      const rawData = { details: 'debug-info' };
+      const error = new APIError('Test error', rawData);
+
+      const result = error.result;
+      expect(result).toEqual(rawData);
+    });
+
+    it('should sanitize sensitive data in message', () => {
+      const error = new APIError(
+        'Error with API key abc123abc123abc123abc123abc123ab and IP 192.168.1.1 and path /some/file/path',
+        {}
+      );
+
+      expect(error.message).toContain('[REDACTED]');
+      expect(error.message).toContain('[IP]');
+      expect(error.message).toContain('[PATH]');
+      expect(error.message).not.toContain('192.168.1.1');
+      expect(error.message).not.toContain('/some/file');
+    });
+
+    it('should exclude stack and result in production toJSON', () => {
+      process.env.NODE_ENV = 'production';
+      const error = new APIError('Production error', { sensitive: 'data' });
+
+      const json = error.toJSON();
+      expect(json).toHaveProperty('name');
+      expect(json).toHaveProperty('message');
+      expect(json).not.toHaveProperty('stack');
+      expect(json).not.toHaveProperty('result');
+    });
+
+    it('should include stack and result in development toJSON', () => {
+      process.env.NODE_ENV = 'development';
+      const rawData = { debug: 'info' };
+      const error = new APIError('Dev error', rawData);
+
+      const json = error.toJSON();
+      expect(json).toHaveProperty('stack');
+      expect(json).toHaveProperty('result');
+      expect(json.result).toEqual(rawData);
+    });
+  });
+
+  describe('UnsupportedChainError', () => {
+    it('should create error with proper message and code', () => {
+      const error = new UnsupportedChainError(999, 'getBeaconStats');
+
+      expect(error.message).toContain('getBeaconStats');
+      expect(error.message).toContain('999');
+      expect(error.code).toBe('UNSUPPORTED_CHAIN');
+      expect(error.status).toBe(400);
+    });
+
+    it('should be throwable and catchable', () => {
+      expect(() => {
+        throw new UnsupportedChainError(56, 'testMethod');
+      }).toThrow(UnsupportedChainError);
+    });
+  });
+
+  describe('Plan Upgrade Errors', () => {
+    it('should identify plan upgrade requirements', () => {
+      const error = new PlanUpgradeRequired('Upgrade to access this feature', {});
+      expect(error.status).toBe(402);
+      expect(error.code).toBe('PLAN_UPGRADE_REQUIRED');
+      expect(error.message).toContain('Etherscan API Plan Upgrade Required');
+    });
+
+    it('should throw PlanUpgradeRequired when API asks for an upgrade', async () => {
+      mockFetchResponse({
+        status: '0',
+        message: 'NOTOK',
+        result: 'Please upgrade your plan to access this endpoint.',
+      });
+
+      await expect(client.account.getBalance(TEST_ADDRESSES.VITALIK)).rejects.toThrow(
+        PlanUpgradeRequired
+      );
     });
   });
 });

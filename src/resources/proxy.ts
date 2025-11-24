@@ -149,7 +149,7 @@ export class Proxy extends BaseModule {
         action: 'eth_getUncleByBlockNumberAndIndex',
         ...params,
       },
-      EthBlockSchema
+      EthBlockSchema.nullable()
     );
   }
 

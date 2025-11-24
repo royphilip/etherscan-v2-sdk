@@ -1,6 +1,6 @@
 {
   "name": "etherscan-v2-sdk",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Production grade Etherscan V2 SDK with Zod validation and Rate Limiting",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

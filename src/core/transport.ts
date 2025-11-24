@@ -1,7 +1,7 @@
 import Bottleneck from 'bottleneck';
 import { z } from 'zod';
 import { createHash } from 'crypto';
-import { APIError, EtherscanError, RateLimitError, ValidationError } from './errors';
+import { APIError, EtherscanError, RateLimitError, ValidationError, PlanUpgradeRequired } from './errors';
 import { ChainId } from './types';
 import { LRUCache, RequestDeduplicator, InterceptorManager } from './cache';
 
@@ -315,6 +315,17 @@ export class Transport {
 
             if (/rate limit/i.test(data.result || '')) {
               throw new RateLimitError();
+            }
+
+            // Check for plan upgrade required errors
+            const message = data.message || '';
+            const result = data.result || '';
+            if (
+              /upgrade.*plan/i.test(message) ||
+              /upgrade.*plan/i.test(result) ||
+              /free.*not supported/i.test(result)
+            ) {
+              throw new PlanUpgradeRequired(message, result);
             }
 
             throw new APIError(data.message, data.result);

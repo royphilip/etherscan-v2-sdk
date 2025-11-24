@@ -13,16 +13,16 @@ export class EtherscanError extends Error {
 export class APIError extends EtherscanError {
   private rawResult: any;
 
-  constructor(message: string, result: any) {
+  constructor(message: string, result: any, status: number = 200, code: string = 'API_LOGIC_ERROR') {
     // Sanitize message
     const sanitized = APIError.sanitizeMessage(message);
-    super(`Etherscan API Error: ${sanitized}`, 200, 'API_LOGIC_ERROR');
+    super(`Etherscan API Error: ${sanitized}`, status, code);
 
     // Store raw result but don't expose it in production
     this.rawResult = result;
   }
 
-  private static sanitizeMessage(message: string): string {
+  protected static sanitizeMessage(message: string): string {
     let sanitized = message;
 
     // Remove potential API keys - target 32-64 char hex strings that appear near API-related keywords
@@ -86,5 +86,13 @@ export class UnsupportedChainError extends EtherscanError {
 export class ValidationError extends EtherscanError {
   constructor(message: string) {
     super(message, 500, 'SCHEMA_VALIDATION_ERROR');
+  }
+}
+
+export class PlanUpgradeRequired extends APIError {
+  constructor(message: string, result: any) {
+    super(message, result, 402, 'PLAN_UPGRADE_REQUIRED');
+    this.message = `Etherscan API Plan Upgrade Required: ${APIError.sanitizeMessage(message)}`;
+    this.name = 'PlanUpgradeRequired';
   }
 }

@@ -18,6 +18,8 @@ export class LRUCache<T> {
   private cache = new Map<string, CacheEntry<T>>();
   private accessOrder = new Set<string>();
   private config: CacheConfig;
+  private hits = 0;
+  private misses = 0;
 
   constructor(config: Partial<CacheConfig> = {}) {
     this.config = {
@@ -29,16 +31,26 @@ export class LRUCache<T> {
   }
 
   get(key: string): T | null {
-    if (!this.config.enabled) return null;
+    if (!this.config.enabled) {
+      this.misses++;
+      return null;
+    }
 
     const entry = this.cache.get(key);
-    if (!entry) return null;
+    if (!entry) {
+      this.misses++;
+      return null;
+    }
 
     // Check if expired
     if (Date.now() - entry.timestamp > entry.ttl) {
       this.delete(key);
+      this.misses++;
       return null;
     }
+
+    // Cache hit!
+    this.hits++;
 
     // Update access order
     this.accessOrder.delete(key);
@@ -88,6 +100,8 @@ export class LRUCache<T> {
   clear(): void {
     this.cache.clear();
     this.accessOrder.clear();
+    this.hits = 0;
+    this.misses = 0;
   }
 
   size(): number {
@@ -105,11 +119,13 @@ export class LRUCache<T> {
   }
 
   // Get cache stats
-  stats(): { size: number; maxSize: number; enabled: boolean } {
+  stats(): { size: number; maxSize: number; enabled: boolean; hits: number; misses: number } {
     return {
       size: this.cache.size,
       maxSize: this.config.maxSize,
       enabled: this.config.enabled,
+      hits: this.hits,
+      misses: this.misses,
     };
   }
 

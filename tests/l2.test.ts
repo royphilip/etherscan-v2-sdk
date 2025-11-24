@@ -20,40 +20,36 @@ describe('L2 Module', () => {
         message: 'OK',
         result: [
           {
-            blockNumber: '12345678',
-            timeStamp: '1609459200',
-            hash: '0x1234567890abcdef1234567890abcdef12345678',
-            nonce: '1',
-            blockHash: '0xabcd1234567890abcdef1234567890abcdef1234',
-            transactionIndex: '0',
-            from: TEST_ADDRESSES.VITALIK,
-            to: TEST_ADDRESSES.CONTRACT,
-            value: '1000000000000000000',
-            gas: '21000',
-            gasPrice: '20000000000',
-            isError: '0',
-            txreceipt_status: '1',
-            input: '0x',
-            contractAddress: '',
-            cumulativeGasUsed: '21000',
-            gasUsed: '21000',
-            confirmations: '100',
+            hash: '0xf645deb2b6fbb8b76ccbcf4bde782e28d3520e8a30e9a568b9b8c526e2fd8434',
+            blockNumber: '51844560',
+            timeStamp: '1704181285',
+            from: '0x0000000000000000000000000000000000000000',
+            address: TEST_ADDRESSES.VITALIK,
+            amount: '2341706540000000000',
+            tokenName: 'Polygon Token',
+            symbol: 'POL',
+            contractAddress: '0x0000000000000000000000000000000000001010',
+            divisor: '18',
           },
         ],
       });
 
       const txns = await client.l2.getTxnBridge({
         address: TEST_ADDRESSES.VITALIK,
-        startblock: 12300000,
-        endblock: 12400000,
+        page: 1,
+        offset: 10,
       });
 
       expect(txns).toEqual([
         expect.objectContaining({
-          blockNumber: '12345678',
-          from: TEST_ADDRESSES.VITALIK,
-          to: TEST_ADDRESSES.CONTRACT,
-          value: 1000000000000000000n,
+          hash: '0xf645deb2b6fbb8b76ccbcf4bde782e28d3520e8a30e9a568b9b8c526e2fd8434',
+          blockNumber: '51844560',
+          timeStamp: '1704181285',
+          from: '0x0000000000000000000000000000000000000000',
+          address: TEST_ADDRESSES.VITALIK,
+          amount: 2341706540000000000n,
+          tokenName: 'Polygon Token',
+          symbol: 'POL',
         }),
       ]);
     });
